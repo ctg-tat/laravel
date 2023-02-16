@@ -13,13 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('article_likes', function (Blueprint $table) {
             $table->id();
-            $table->string('username', 60)->unique();
-            $table->string('password');
-            $table->string('image_path')->nullable()->default(null);
-            $table->enum('role', ['user', 'admin', 'banned'])->default('user');
-            $table->timestamps();
+            $table->foreignId('user_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('article_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
         });
     }
 
@@ -30,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('article_likes');
     }
 };
