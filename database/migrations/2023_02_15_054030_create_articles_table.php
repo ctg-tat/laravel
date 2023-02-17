@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('articles', function (Blueprint $table) {
             $table->id();
             $table->string('title', 255);
-            $table->string('content');
+            $table->text('content');
             $table->string('anons_title', 70)->nullable()->default(null);
             $table->string('image_path', 255)->nullable()->default(null);
             $table->enum('status', ['published', 'unpublished', 'blocked'])->default('published');
