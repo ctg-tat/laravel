@@ -31,7 +31,13 @@ class IndexController extends Controller
         return view('single');
     }
 
-    public function user(){
-        return view('user');
+    public function user(User $user){
+        return view('user', compact('user'));
+    }
+
+    public function update(Article $article){
+        $categories = Category::all();
+
+        return view('update', compact('categories', 'article'));
     }
 }

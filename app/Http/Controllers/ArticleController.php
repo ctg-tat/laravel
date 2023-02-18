@@ -52,14 +52,42 @@ class ArticleController extends Controller
             return redirect()->route('home');
         }
 
+        $article->view_count += 1;
+        $article->save();
+
         return view('single', [
             'article' => $article
         ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Article $article)
     {
-        //
+//        $request->validate([])
+
+        $validator = Validator::make($request->all(), [
+            'title' => 'min:1',
+            'content' => 'min:1',
+            'anons_title' => 'nullable',
+            'category_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator->errors())->withInput($request->all());
+        }
+
+        $validated = $validator->validated();
+
+        if ($request->file('file')) {
+            $data = $request->validate(['file' => 'mimes:png,jpeg,jpg']);
+
+            $path = $request->file('file')->store('public/images');
+
+            $validated['image_path'] = $path;
+        }
+
+        $article->update($validated);
+
+        return redirect()->route('single', $article);
     }
 
     public function destroy($id)
@@ -67,5 +95,17 @@ class ArticleController extends Controller
         Article::destroy($id);
 
         return redirect()->route('home');
+    }
+
+    public function setStatus(Article $article, $status)
+    {
+        $article->update(['status' => $status]);
+
+        return redirect()->route('home');
+    }
+
+    public function setStatusBlocked(Article $article)
+    {
+        return $this->setStatus($article, 'blocked');
     }
 }
